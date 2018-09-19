@@ -8,14 +8,12 @@ SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 CENTER_X = SCREEN_WIDTH // 2
 CENTER_Y = SCREEN_HEIGHT // 2
+FULL_VISIBLE = 256
 
 # (x - x1) * (y2 - y1) - (x2 - x1) * (y - y1) = 0
-
-# if check_point(CENTER_X, CENTER_Y, int(x), int(y), ball.x, ball.y)
-
 def check_point(x1, y1, x2, y2, x, y):
     val = (x - x1) * (y2 - y1) - (x2 - x1) * (y - y1)
-    return val >= -100 and val <= 100 and (x > x1 and x < x2 or x > x2 and x < x1)
+    return val >= -150 and val <= 150 and (x > x1 and x < x2 or x > x2 and x < x1)
     # return val == 0
 
 class Ball:
@@ -31,8 +29,13 @@ class Ball:
     def draw(self):
         arcade.draw_circle_filled(self.x, self.y, self.size, self.color)
 
-    def update():
-        pass
+    def update(self):
+        if self.visible:
+            self.color[3] = self.color[3] - 2
+
+        if self.color[3] == 0:
+            self.visible = False
+            self.color[3] = FULL_VISIBLE
 
 class Sweep:
     def __init__(self):
@@ -73,7 +76,7 @@ def make_ball(x, y):
     ball.y = int(y)
 
     # Color
-    ball.color = (random.randrange(256), random.randrange(256), random.randrange(256))
+    ball.color = [random.randrange(256), random.randrange(256), random.randrange(256), FULL_VISIBLE]
 
     return ball
 
@@ -107,7 +110,9 @@ class MyGame(arcade.Window):
         self.sweep.update()
 
         for ball in self.ball_list:
-            if check_point(CENTER_X, CENTER_Y, self.sweep.x, self.sweep.y, ball.x, ball.y):
+            ball.update()
+
+            if not ball.visible and check_point(CENTER_X, CENTER_Y, self.sweep.x, self.sweep.y, ball.x, ball.y):
                 ball.visible = True
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
@@ -127,7 +132,8 @@ class MyGame(arcade.Window):
 
 
 def main():
-    MyGame()
+    game = MyGame()
+    game.set_update_rate(1 / 60)
     arcade.run()
 
 
