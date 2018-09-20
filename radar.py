@@ -8,7 +8,7 @@ SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 600
 CENTER_X = SCREEN_WIDTH // 2
 CENTER_Y = SCREEN_HEIGHT // 2
-FULL_VISIBLE = 256
+FULL_VISIBLE = 255
 
 # (x - x1) * (y2 - y1) - (x2 - x1) * (y - y1) = 0
 def check_point(x1, y1, x2, y2, x, y):
@@ -33,7 +33,7 @@ class Ball:
         if self.visible:
             self.color[3] = self.color[3] - 2
 
-        if self.color[3] == 0:
+        if self.color[3] <= 0:
             self.visible = False
             self.color[3] = FULL_VISIBLE
 
@@ -110,10 +110,10 @@ class MyGame(arcade.Window):
         self.sweep.update()
 
         for ball in self.ball_list:
-            ball.update()
-
             if not ball.visible and check_point(CENTER_X, CENTER_Y, self.sweep.x, self.sweep.y, ball.x, ball.y):
                 ball.visible = True
+
+            ball.update()
 
     def on_mouse_press(self, x: float, y: float, button: int, modifiers: int):
         """
