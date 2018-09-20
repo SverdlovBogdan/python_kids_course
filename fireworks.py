@@ -43,7 +43,7 @@ class Particle:
         self.acc_x = 0
         self.acc_y = 0
 
-        if self.color[3] > 0:
+        if self.color[3] - 2 > 0:
             self.color[3] = self.color[3] - 2
 
     def draw(self):
@@ -73,7 +73,12 @@ class Fireworks:
                 particle = Particle(i.x, i.y)
                 particle.vel_x = random.uniform(-1, 1)
                 particle.vel_y = random.uniform(-1, 1)
+
+                particle.vel_x *= random.uniform(1, 1.5)
+                particle.vel_y *= random.uniform(1.5, 2.0)
+
                 particle.size = 2
+                particle.color = [random.randrange(256), random.randrange(256), random.randrange(256), particle.visibility]
                 self.small_particles.append(particle)
 
         for i in self.small_particles:
@@ -125,6 +130,7 @@ class MyGame(arcade.Window):
 def main():
     game = MyGame()
     game.set_update_rate(1 / 60)
+
     arcade.run()
 
 
