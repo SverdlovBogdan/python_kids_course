@@ -119,7 +119,6 @@ class MyGame(arcade.Window):
     def update(self, delta_time):
         if random.randint(0, 100) < 10:
             self.fireworks.add_particle()
-            print(len(self.fireworks.main_particles), len(self.fireworks.small_particles))
 
         self.fireworks.update()
 
