@@ -6,21 +6,15 @@ import copy
 # --- Set up the constants
 
 # Size of the screen
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 600
+SCREEN_WIDTH = 400
+SCREEN_HEIGHT = 400
 
 CENTER_X = SCREEN_WIDTH // 2
 CENTER_Y = SCREEN_WIDTH // 2
 
-SQUARE_SPACING = 1
-
-
 SQUARE_SIZE = 3
 HALF_SQUARE_WIDTH = SQUARE_SIZE // 2
 HALF_SQUARE_HEIGHT = SQUARE_SIZE // 2
-
-BUBBLE_WIDTH = 200
-BUBBLE_HEIGHT = 200
 
 COLS = int(SCREEN_WIDTH // SQUARE_SIZE)
 ROWS = int(SCREEN_HEIGHT // SQUARE_SIZE)
@@ -60,7 +54,7 @@ class MyGame(arcade.Window):
                 self.buffer_2[y][x] = (self.buffer_1[y][x - 1] + self.buffer_1[y][x + 1] + self.buffer_1[y + 1][x] + self.buffer_1[y - 1][x]) / 2 - self.buffer_2[y][x]
                 self.buffer_2[y][x] = self.buffer_2[y][x] * damping
 
-                if self.buffer_2[y][x] <= 2.0:
+                if self.buffer_2[y][x] <= 0.5:
                     continue
 
                 for i in range(4):
