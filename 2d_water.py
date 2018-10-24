@@ -6,13 +6,13 @@ import copy
 # --- Set up the constants
 
 # Size of the screen
-SCREEN_WIDTH = 400
+SCREEN_WIDTH = 600
 SCREEN_HEIGHT = 400
 
 CENTER_X = SCREEN_WIDTH // 2
 CENTER_Y = SCREEN_WIDTH // 2
 
-SQUARE_SIZE = 3
+SQUARE_SIZE = 5
 HALF_SQUARE_WIDTH = SQUARE_SIZE // 2
 HALF_SQUARE_HEIGHT = SQUARE_SIZE // 2
 
@@ -77,7 +77,6 @@ class MyGame(arcade.Window):
                 point_list.append(bottom_right)
                 point_list.append(bottom_left)
 
-        print(len(point_list))
         shape = arcade.create_rectangles_filled_with_colors(point_list, color_list)
         self.draw_buffer = arcade.ShapeElementList()
         self.draw_buffer.append(shape)

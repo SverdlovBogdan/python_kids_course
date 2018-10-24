@@ -5,8 +5,8 @@ import math
 # --- Set up the constants
 
 # Size of the screen
-SCREEN_WIDTH = 600
-SCREEN_HEIGHT = 400
+SCREEN_WIDTH = 1200
+SCREEN_HEIGHT = 800
 
 CENTER_X = SCREEN_WIDTH // 2
 CENTER_Y = SCREEN_WIDTH // 2
