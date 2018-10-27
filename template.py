@@ -18,7 +18,7 @@ class MyGame(arcade.Window):
         super().__init__(SCREEN_WIDTH, SCREEN_HEIGHT, "Appication")
 
     def on_draw(self):
-        pass
+        arcade.start_render()
 
     def update(self, delta_time):
         pass
