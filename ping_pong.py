@@ -12,6 +12,10 @@ import arcade
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 
+SCORE_LEFT_UPDATE = 1
+SCORE_RIGHT_UPDATE = 2
+SCORE_NOTHING_UPDATE = 3
+
 
 class Vector:
     def __init__(self, x, y):
@@ -51,11 +55,18 @@ class Ball:
     def __init__(self):
         self.pos = Vector(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
         self.vel = Vector(3, 3)
+        self.can_move = False
     
     def draw(self):
         arcade.draw_point(self.pos.x, self.pos.y, arcade.color.RED, 10)
+    
+    def you_can_move(self):
+        self.can_move = True
 
     def update(self, left_pos, right_pos):
+        if self.can_move == False:
+            return SCORE_NOTHING_UPDATE
+
         if self.pos.y <= 5:
             self.pos.y = 5
             self.vel.y = 3
@@ -64,11 +75,13 @@ class Ball:
             self.vel.y = -3
 
         if self.pos.x <= 5:
-            self.pos.x = 5
-            self.vel.x = 3
+            self.pos = Vector(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+            self.can_move = False
+            return SCORE_RIGHT_UPDATE
         elif self.pos.x >= SCREEN_WIDTH - 5:
-            self.pos.x = SCREEN_WIDTH - 5
-            self.vel.x = -3
+            self.pos = Vector(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2)
+            self.can_move = False
+            return SCORE_LEFT_UPDATE
 
         rect_left = ((left_pos.pos.x - left_pos.w / 2, left_pos.pos.y - left_pos.h / 2),
                     (left_pos.pos.x - left_pos.w / 2, left_pos.pos.y + left_pos.h / 2),
@@ -80,8 +93,33 @@ class Ball:
                     (right_pos.pos.x + right_pos.w / 2, right_pos.pos.y + right_pos.h / 2),
                     (right_pos.pos.x + right_pos.w / 2, right_pos.pos.y - right_pos.h / 2))
 
+        rect_ball = ((self.pos.x - 5, self.pos.y - 5),
+                     (self.pos.x - 5, self.pos.y + 5),
+                     (self.pos.x + 5, self.pos.y + 5),
+                     (self.pos.x + 5, self.pos.y - 5))
+
+        is_left_col = arcade.geometry.are_polygons_intersecting(rect_left, rect_ball)
+        is_right_col = arcade.geometry.are_polygons_intersecting(rect_right, rect_ball)
+
+        if is_left_col == True:
+            self.vel.x = 3
+        elif is_right_col == True:
+            self.vel.x = -3
+
         self.pos.add(self.vel)
 
+        return SCORE_NOTHING_UPDATE
+
+class Score:
+    def __init__(self, x, y):
+        self.pos = Vector(x, y)
+        self.score = 0
+
+    def add_one(self):
+        self.score = self.score + 1
+
+    def draw(self):
+        arcade.draw_text(str(self.score), self.pos.x, self.pos.y, arcade.color.BLACK_BEAN, 40)
 
 class MyGame(arcade.Window):
     """
@@ -106,6 +144,9 @@ class MyGame(arcade.Window):
         self.is_s_pressed = False
         self.is_up_pressed = False
         self.is_down_pressed = False
+
+        self.left_score = Score(250, 500)
+        self.right_score = Score(550, 500)
         # If you have sprite lists, you should create them here,
         # and set them to None
 
@@ -126,6 +167,9 @@ class MyGame(arcade.Window):
         self.paddle_right.draw()
 
         self.ball.draw()
+
+        self.left_score.draw()
+        self.right_score.draw()
 
         # Call draw() on all your sprite lists below
 
@@ -148,7 +192,12 @@ class MyGame(arcade.Window):
         self.paddle_left.update()
         self.paddle_right.update()
 
-        self.ball.update(self.paddle_left, self.paddle_right)
+        score_update = self.ball.update(self.paddle_left, self.paddle_right)
+        
+        if score_update == SCORE_LEFT_UPDATE:
+            self.left_score.add_one()
+        elif score_update == SCORE_RIGHT_UPDATE:
+            self.right_score.add_one()
 
     def on_key_press(self, key, key_modifiers):
         """
@@ -179,6 +228,8 @@ class MyGame(arcade.Window):
             self.is_up_pressed = False
         elif key == arcade.key.DOWN:
             self.is_down_pressed = False
+        elif key == arcade.key.SPACE:
+            self.ball.you_can_move()
 
     def on_mouse_motion(self, x, y, delta_x, delta_y):
         """
